@@ -3,6 +3,10 @@ const common = require("./webpack.common.js");
 
 module.exports = merge(common, {
   mode: "production",
+  output: {
+    path: path.resolve(__dirname, "public"),
+    filename: "bundle.js",
+  },
   module: {
     rules: [
       {

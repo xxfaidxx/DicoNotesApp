@@ -1,0 +1,71 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: black;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  max-width: 60em;
+  margin: 0 auto;
+  justify-content: center;
+  color: white;
+  margin-top: 10px;
+}
+
+.list > * {
+  padding: 10px;
+  border: 1px solid #333;
+  text-align: center;
+  background-color: #0b192c;
+  border-radius: 2em;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.archive-button,
+.unarchive-button {
+  background-color: #578fca;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.delete-button {
+  background-color: #ff0000;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+@media (max-width: 1024px) {
+  .list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  #noteForm {
+    width: 90%;
+  }
+}

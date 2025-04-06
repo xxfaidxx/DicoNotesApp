@@ -3,6 +3,8 @@ import {
   customValidationTitleHandler,
 } from "./form-valid.js";
 
+import { showLoading, hideLoading } from "./index.js";
+
 class FormAdd extends HTMLElement {
   constructor() {
     super();
@@ -108,6 +110,7 @@ class FormAdd extends HTMLElement {
     }
 
     form.addEventListener("submit", async (event) => {
+      showLoading();
       event.preventDefault();
       const newNote = {
         title: titleInput.value,
@@ -123,7 +126,7 @@ class FormAdd extends HTMLElement {
               "Content-Type": "application/json",
             },
             body: JSON.stringify(newNote),
-          },
+          }
         );
 
         if (!response.ok) {
@@ -135,7 +138,7 @@ class FormAdd extends HTMLElement {
         console.log("Note berhasil disimpan:", result);
 
         this.dispatchEvent(
-          new CustomEvent("add-note", { detail: result.data }),
+          new CustomEvent("add-note", { detail: result.data })
         );
 
         titleInput.value = "";
@@ -143,6 +146,8 @@ class FormAdd extends HTMLElement {
       } catch (error) {
         console.error("Terjadi kesalahan:", error);
         alert(`Gagal menambahkan catatan: ${error.message}`);
+      } finally {
+        hideLoading();
       }
     });
   }

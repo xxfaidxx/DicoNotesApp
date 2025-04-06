@@ -1,5 +1,5 @@
-import "./styles.css";
 import "./load-indicator.js";
+import "./styles.css";
 import "./app-bar.js";
 import "./form-add.js";
 import "./archive-title.js";
@@ -10,6 +10,7 @@ import gsap from "gsap";
 
 const url = "https://notes-api.dicoding.dev/v2/notes";
 const notesListElement = document.querySelector("#notesList");
+const loadingIndicator = document.querySelector("loading-indicator");
 const formAddElement = document.querySelector("form-add");
 
 function createNoteItemElement({ id, title, body }) {
@@ -25,6 +26,7 @@ function createNoteItemElement({ id, title, body }) {
 
 const renderNotes = async () => {
   try {
+    showLoading();
     const response = await fetch(url);
     const responseJson = await response.json();
 
@@ -60,7 +62,7 @@ const renderNotes = async () => {
             <p>${note.body}</p>
             <button class="unarchive-button" data-noteid="${note.id}">Unarchive</button>
           </div>
-        `,
+        `
         )
         .join("");
 
@@ -68,26 +70,31 @@ const renderNotes = async () => {
     }
   } catch (error) {
     console.error("Gagal mengambil catatan:", error);
+  } finally {
+    hideLoading();
   }
 };
 
 renderNotes();
 
-formAddElement.addEventListener("add-note", (event) => {
+formAddElement.addEventListener("add-note", async (event) => {
   const newNote = event.detail;
-  notesListElement.insertAdjacentHTML(
-    "afterbegin",
-    createNoteItemElement(newNote),
-  );
+  try {
+    notesListElement.insertAdjacentHTML(
+      "afterbegin",
+      createNoteItemElement(newNote)
+    );
 
-  const newNoteElement = document.querySelector(
-    `[data-noteid="${CSS.escape(newNote.id)}"]`,
-  );
+    const newNoteElement = document.querySelector(
+      `[data-noteid="${CSS.escape(newNote.id)}"]`
+    );
 
-  addNoteAnimation(newNoteElement);
-
-  addEventArchive();
-  addEventDelete();
+    addNoteAnimation(newNoteElement);
+    addEventArchive();
+    addEventDelete();
+  } catch (error) {
+    console.error("Gagal menambahkan catatan:", error);
+  }
 });
 
 notesListElement.addEventListener("click", async (event) => {
@@ -95,11 +102,11 @@ notesListElement.addEventListener("click", async (event) => {
     event.preventDefault();
     const noteId = event.target.getAttribute("data-noteid");
     console.log("Menghapus note dengan ID:", noteId);
-
+    showLoading();
     await deleteNote(noteId);
-
+    hideLoading();
     const noteElement = document.querySelector(
-      `[data-noteid="${CSS.escape(noteId)}"]`,
+      `[data-noteid="${CSS.escape(noteId)}"]`
     );
 
     gsap.to(noteElement, {
@@ -124,9 +131,23 @@ const startPolling = () => {
   setInterval(() => {
     console.log("Mengambil note terbaru...");
     renderNotes();
-  }, 5000);
+  }, 120000);
 };
 
 startPolling();
 
-export { createNoteItemElement, addNoteAnimation, gsap };
+function showLoading() {
+  loadingIndicator.show();
+}
+
+function hideLoading() {
+  loadingIndicator.hide();
+}
+
+export {
+  createNoteItemElement,
+  addNoteAnimation,
+  gsap,
+  showLoading,
+  hideLoading,
+};

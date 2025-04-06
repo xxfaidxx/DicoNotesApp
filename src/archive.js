@@ -1,8 +1,15 @@
-import { createNoteItemElement, addNoteAnimation, gsap } from "./index.js";
+import {
+  createNoteItemElement,
+  addNoteAnimation,
+  gsap,
+  showLoading,
+  hideLoading,
+} from "./index.js";
 
 const url = "https://notes-api.dicoding.dev/v2/notes/";
 
 const archiveNote = async (id) => {
+  showLoading();
   try {
     const response = await fetch(`${url}${id}/archive`, {
       method: "POST",
@@ -28,7 +35,7 @@ const archiveNote = async (id) => {
         `;
 
         const newArchivedNote = archiveListElement.querySelector(
-          `[data-noteid="${id}"]`,
+          `[data-noteid="${id}"]`
         );
         addNoteAnimation(newArchivedNote);
       }
@@ -40,6 +47,8 @@ const archiveNote = async (id) => {
   } catch (error) {
     console.error("Gagal mengarsipkan catatan:", error);
     alert("Gagal mengarsipkan catatan.");
+  } finally {
+    hideLoading();
   }
 };
 
@@ -53,6 +62,7 @@ const addEventArchive = () => {
 };
 
 const unarchiveNote = async (id) => {
+  showLoading();
   try {
     const response = await fetch(`${url}${id}/unarchive`, {
       method: "POST",
@@ -86,7 +96,7 @@ const unarchiveNote = async (id) => {
         });
 
         const newNoteElement = notesListElement.querySelector(
-          `[data-noteid="${id}"]`,
+          `[data-noteid="${id}"]`
         );
         addNoteAnimation(newNoteElement);
       }
@@ -98,6 +108,8 @@ const unarchiveNote = async (id) => {
   } catch (error) {
     console.error("Gagal membatalkan arsip catatan:", error);
     alert("Gagal membatalkan arsip catatan.");
+  } finally {
+    hideLoading();
   }
 };
 
